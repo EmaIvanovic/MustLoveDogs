@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "574523603915",
+    "firebase_url": "https://mustlovedogs-1529975548298.firebaseio.com",
+    "project_id": "mustlovedogs-1529975548298",
+    "storage_bucket": "mustlovedogs-1529975548298.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574523603915:android:f4f957fd4b3dcf50",
+        "android_client_info": {
+          "package_name": "com.example.ema.mldapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574523603915-ml6tf45d9o5r46ot1ma5d3v5bm5blc8d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ema.mldapp",
+            "certificate_hash": "9a5976e641df6f8fbf92bb6649a705bafcdac32f"
+          }
+        },
+        {
+          "client_id": "574523603915-32qv9vcu6uiihuetl7c7sqgpqeuv6v4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXSsiT3oKtpIs99Pzc9RMBUkZi6KmuxQ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574523603915-32qv9vcu6uiihuetl7c7sqgpqeuv6v4p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
