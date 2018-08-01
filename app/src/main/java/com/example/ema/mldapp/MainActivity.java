@@ -96,11 +96,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     private void emailSignIn() {
-
+        Intent intent = new Intent(this, LogInActivity.class);
+        startActivity(intent);
     }
 
     private void emailRegister() {
-
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
     }
 
     private void googleSignIn() {

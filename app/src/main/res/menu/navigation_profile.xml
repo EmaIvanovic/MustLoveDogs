@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_human"
+        android:icon="@drawable/human_24dp"
+        android:title="Human" />
+
+    <item
+        android:id="@+id/navigation_pet"
+        android:icon="@drawable/pet_24dp"
+        android:title="Pet" />
+
+</menu>
