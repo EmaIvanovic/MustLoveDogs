@@ -1,17 +1,23 @@
 package com.example.ema.mldapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
+    FirebaseAuth mAuth;
 //    private DrawerLayout mDrawerLayout;
 //    private ActionBarDrawerToggle mToggle;
 
@@ -20,6 +26,21 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        //TODO ne radi side-navig logout
+        NavigationView sideNavigation = findViewById(R.id.sideNavigation);
+        sideNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(v.getId()){
+                    case R.id.side_logout:
+                        mAuth.signOut();
+                        startActivity(new Intent(HomeActivity.this,MainActivity.class));
+                        break;
+                }
+            }
+        });
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
@@ -47,12 +68,16 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
+//
+//     case R.id.side_logout:
+//            mAuth.signOut();
+//    startActivity(new Intent(HomeActivity.this,MainActivity.class));
+//                break;
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
 
         switch (item.getItemId()){
-
             case R.id.navigation_map:
                 fragment = new MapFragment();
                 break;
