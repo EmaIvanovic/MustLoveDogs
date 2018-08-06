@@ -14,10 +14,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    FirebaseAuth mAuth;
+      private FirebaseAuth mAuth;
 //    private DrawerLayout mDrawerLayout;
 //    private ActionBarDrawerToggle mToggle;
 
@@ -28,24 +29,25 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
         mAuth = FirebaseAuth.getInstance();
 
-        //TODO ne radi side-navig logout
-        NavigationView sideNavigation = findViewById(R.id.sideNavigation);
-        sideNavigation.setOnClickListener(new View.OnClickListener() {
+        NavigationView sideNavigation = (NavigationView)findViewById(R.id.sideNavigation);
+        sideNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                switch(v.getId()){
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
                     case R.id.side_logout:
                         mAuth.signOut();
                         startActivity(new Intent(HomeActivity.this,MainActivity.class));
-                        break;
+                        return true;
                 }
+                return false;
             }
+
         });
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
         loadFragment(new FeedFragment());
-
 //        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 //        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
 //

@@ -92,12 +92,13 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         android:inputType="textPersonName"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/lblUser"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/barrierImput" />
+        app:layout_constraintStart_toEndOf="@+id/barrierImput"
+        app:layout_constraintTop_toBottomOf="@+id/imgLogo" />
 
     <EditText
         android:id="@+id/txtName"
@@ -105,12 +106,13 @@
         android:layout_height="38dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
         android:inputType="textPersonName"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/lblName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/barrierImput" />
+        app:layout_constraintStart_toEndOf="@+id/barrierImput"
+        app:layout_constraintTop_toBottomOf="@+id/txtUser" />
 
     <EditText
         android:id="@+id/txtSurname"
@@ -118,12 +120,13 @@
         android:layout_height="38dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="10dp"
         android:inputType="textPersonName"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/lblSurname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/barrierImput" />
+        app:layout_constraintStart_toEndOf="@+id/barrierImput"
+        app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
     <EditText
         android:id="@+id/txtEmail"
@@ -131,12 +134,13 @@
         android:layout_height="37dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
         android:inputType="textEmailAddress"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/lblEmail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/barrierImput" />
+        app:layout_constraintStart_toEndOf="@+id/barrierImput"
+        app:layout_constraintTop_toBottomOf="@+id/txtSurname" />
 
     <EditText
         android:id="@+id/txtPass"
@@ -144,12 +148,13 @@
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="38dp"
         android:inputType="textPassword"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/lblPass"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/barrierImput" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/barrierImput"
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
 
     <EditText
         android:id="@+id/txtCPass"
@@ -157,12 +162,13 @@
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="6dp"
         android:inputType="textPassword"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/lblCpass"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/barrierImput" />
+        app:layout_constraintStart_toEndOf="@+id/barrierImput"
+        app:layout_constraintTop_toBottomOf="@+id/txtPass" />
 
     <Button
         android:id="@+id/btnRegister"

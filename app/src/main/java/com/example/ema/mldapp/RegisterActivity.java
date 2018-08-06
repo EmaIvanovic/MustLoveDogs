@@ -133,7 +133,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         else{
             validateNoEmpties.setText("There should be no empty fields");
-        return false;
+            return false;
         }
     }
 
