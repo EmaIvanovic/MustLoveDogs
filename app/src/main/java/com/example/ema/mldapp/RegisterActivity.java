@@ -17,12 +17,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -31,6 +35,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView validateTxt,validatePass,validateNoEmpties;
     private final String TAG = "RegisterActivity.class";
     private DatabaseReference mDatabase;
+    private boolean isUnique;
+    private String emailfd;
     private String emailtxt,passtxt,userNametxt,firstNametxt,lastNametxt;
 
 
@@ -43,6 +49,8 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
+        //isUnique = true;
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -61,19 +69,36 @@ public class RegisterActivity extends AppCompatActivity {
         userName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                String uname = userName.getText().toString();
+                final String uname = userName.getText().toString();
+
+                //check if a user with same username exists or if it has forbidden chars
                 if(!hasFocus){
-                    //check if a user with same username exists or if it has forbidden chars
                     if(uname.length() < 4)
                         validateTxt.setText("Username at least 4 chars");
                     else if(uname.indexOf('.') != -1 || uname.indexOf('/') != -1 ||
                     uname.indexOf('$') != -1 || uname.indexOf('#') != -1 || uname.indexOf('[') != -1 || uname.indexOf(']') != -1) {
                         validateTxt.setText("Can't contain ./#$[]");
                     }
-                    //TODO check if the username already exists
+                    else{
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference usersRef = ref.child("users");
+                        usersRef.orderByKey().equalTo(uname).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists())
+                                    validateTxt.setText("Username already taken");
+                                else
+                                    validateTxt.setText("");
+                            }
 
-                    else
-                        validateTxt.setText("");
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d("RegisterActivity", "Database error retrieving data");
+                            }
+                        });
+
+
+                    }
                 }
             }
         });
