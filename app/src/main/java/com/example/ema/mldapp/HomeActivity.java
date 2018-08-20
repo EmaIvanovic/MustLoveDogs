@@ -22,6 +22,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 //    private DrawerLayout mDrawerLayout;
 //    private ActionBarDrawerToggle mToggle;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +39,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                         mAuth.signOut();
                         startActivity(new Intent(HomeActivity.this,MainActivity.class));
                         return true;
+                    case R.id.side_profile:
+                        startActivity(new Intent(HomeActivity.this,ProfileActivity.class));
                 }
                 return false;
             }
@@ -78,7 +81,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
-
         switch (item.getItemId()){
             case R.id.navigation_map:
                 fragment = new MapFragment();

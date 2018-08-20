@@ -243,10 +243,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void writeNewUser(String username, String email, String firstName, String lastName) {
 
-        mDatabase.child("users").child(username).child("username").setValue(username);
-        mDatabase.child("users").child(username).child("email").setValue(email);
-        mDatabase.child("users").child(username).child("firstname").setValue(firstName);
-        mDatabase.child("users").child(username).child("lastname").setValue(lastName);
+        User u = new User(email,firstName,lastName,username,null,null);
+        mDatabase.child("users").child(username).setValue(u);
+//        mDatabase.child("users").child(username).child("username").setValue(username);
+//        mDatabase.child("users").child(username).child("email").setValue(email);
+//        mDatabase.child("users").child(username).child("firstname").setValue(firstName);
+//        mDatabase.child("users").child(username).child("lastname").setValue(lastName);
+
         //mDatabase.child("users").child(username).child("profileURL").setValue(lastName);
 
     }
