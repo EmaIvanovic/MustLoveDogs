@@ -1,6 +1,6 @@
 package com.example.ema.mldapp;
 
-import android.app.ProgressDialog;
+//import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,14 +20,17 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -78,6 +81,8 @@ public class HumanFragment extends Fragment {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
+    private ProgressBar spinner;
+
 
 
 
@@ -91,7 +96,9 @@ public class HumanFragment extends Fragment {
         lastname = (EditText) view.findViewById(R.id.txtSurname);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-
+        profileImage = (ImageView) view.findViewById(R.id.profileImage);
+        spinner = (ProgressBar)view.findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         saveHumanBtn = view.findViewById(R.id.buttonSaveHuman);
         btnChooseFromGallery = (ImageButton) view.findViewById(R.id.buttonAddFromGallery);
@@ -106,12 +113,10 @@ public class HumanFragment extends Fragment {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
                     User usr = dataSnapshot.getValue(User.class);
-                    firstname.setText(usr.firstname.toString());
-                    lastname.setText(usr.lastname.toString());
-                    aboutme.setText(usr.aboutMe.toString());
-                }
+                    firstname.setText(usr.firstname);
+                    lastname.setText(usr.lastname);
+                    aboutme.setText(usr.aboutMe);
             }
 
             @Override
@@ -141,7 +146,7 @@ public class HumanFragment extends Fragment {
                 dispatchTakePictureIntent();
             }
         });
-        //setProfileImageView();
+        setProfileImageView();
         return view;
     }
 
@@ -154,43 +159,37 @@ public class HumanFragment extends Fragment {
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(context,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
         }
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        // Ensure that there's a camera activity to handle the intent
-//        if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-//            // Create the File where the photo should go
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                // Error occurred while creating the File
-//            }
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                photoURI = FileProvider.getUriForFile(context,
-//                        "com.example.android.fileprovider",
-//                        photoFile);
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-//            }
-//        }
 
     }
 
     private void uploadImage() {
         if (profileImagePath != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(context);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
+            spinner.setVisibility(View.VISIBLE);
 
-            StorageReference ref = storageReference.child("images/" + mUser.getDisplayName() + "/profileImage");
+            StorageReference ref = storageReference.child("images/" + mUser.getDisplayName() + "/profileImage.jpg");
             ref.putFile(profileImagePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
+                            spinner.setVisibility(View.GONE);
                             Toast.makeText(context, "Uploaded", Toast.LENGTH_SHORT).show();
                             setProfileImageView();
                         }
@@ -198,16 +197,8 @@ public class HumanFragment extends Fragment {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(context, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                            spinner.setVisibility(View.GONE);
+                            //Toast.makeText(context, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -223,19 +214,14 @@ public class HumanFragment extends Fragment {
                 && data != null && data.getData() != null) {
             profileImagePath = data.getData();
             uploadImage();
+            setProfileImageView();
         }
         else if (requestCode == REQUEST_IMAGE_CAPTURE&& resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            profileImage.setImageBitmap(imageBitmap);
-        }
-        else if (requestCode == REQUEST_TAKE_PHOTO&& resultCode == RESULT_OK) {
-            try {
-                if(photoURI != null)
-                    uploadCameraPhoto(photoURI);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            //dispatchTakePictureIntent();
+            //uploadCameraPhoto(photoURI);
+            //setProfileImageView();
         }
     }
 
@@ -257,17 +243,13 @@ public class HumanFragment extends Fragment {
     }
 
     private void uploadCameraPhoto(Uri photoUri){
-
-        final ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setTitle("Uploading...");
-        progressDialog.show();
-
-        StorageReference ref = storageReference.child("images/" + mUser.getDisplayName() + "/profileImage");
+        spinner.setVisibility(View.VISIBLE);
+        StorageReference ref = storageReference.child("images/" + mUser.getDisplayName() + "/profileImage.jpg");
         ref.putFile(photoUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        progressDialog.dismiss();
+                        spinner.setVisibility(View.GONE);
                         Toast.makeText(context, "Uploaded", Toast.LENGTH_SHORT).show();
                         //setProfileImageView();
                     }
@@ -275,43 +257,38 @@ public class HumanFragment extends Fragment {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(context, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        spinner.setVisibility(View.GONE);
                     }
                 })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                .getTotalByteCount());
-                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
                     }
                 });
 
 }
 
-    //TODO fix setProfileImageView : throws nullable exception even though I check if image is null
+    //TODO cache image
     private void setProfileImageView() {
-        StorageReference ref = storage.getReference().child("images/" + mUser.getDisplayName() + "/profileImage");
+        StorageReference ref = storage.getReference().child("images/" + mUser.getDisplayName() + "/profileImage.jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+
         try {
-            final File localFile = File.createTempFile("Images", "bmp");
-            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener< FileDownloadTask.TaskSnapshot >() {
+            final File localFile = File.createTempFile("Images", "jpeg");
+            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    try{
-                        my_image = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                        if(my_image != null)
-                            profileImage.setImageBitmap(my_image);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace(); }
-                    }
+                    Bitmap bm = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                    profileImage.setImageBitmap(bm);
+                }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getActivity(), "Error retrieving profile picture", Toast.LENGTH_LONG).show();
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(context, "Failure", Toast.LENGTH_SHORT).show();
                 }
             });
+
         } catch (IOException e) {
             e.printStackTrace();
         }

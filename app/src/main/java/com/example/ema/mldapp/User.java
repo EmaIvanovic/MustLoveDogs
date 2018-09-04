@@ -10,6 +10,8 @@ public class User {
     public String username;
     public String aboutMe;
     public String profileImageUrl;
+    public Pet pet;
+
 
 
 
