@@ -69,7 +69,6 @@ public class HumanFragment extends Fragment {
     private StorageReference storageReference;
     private Context context;
     private FirebaseUser mUser;
-    Bitmap my_image;
     private DatabaseReference mDatabase;
     private Button saveHumanBtn;
     private ImageButton btnChooseFromGallery, btnOpenCamera;
@@ -78,8 +77,7 @@ public class HumanFragment extends Fragment {
     private Uri photoURI;
     private final int PICK_IMAGE_REQUEST = 71;
     private final int RESULT_OK = -1;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_TAKE_PHOTO = 200;
     String mCurrentPhotoPath;
     private ProgressBar spinner;
 
@@ -171,8 +169,9 @@ public class HumanFragment extends Fragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(context,
-                        "com.example.android.fileprovider",
+                       "com.example.ema.mldapp.fileprovider",
                         photoFile);
+
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
@@ -205,8 +204,6 @@ public class HumanFragment extends Fragment {
 
     }
 
-
-    //TODO fix bug in onActivityResult : upload thumbnail photo
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -214,26 +211,20 @@ public class HumanFragment extends Fragment {
                 && data != null && data.getData() != null) {
             profileImagePath = data.getData();
             uploadImage();
-            setProfileImageView();
         }
-        else if (requestCode == REQUEST_IMAGE_CAPTURE&& resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            //dispatchTakePictureIntent();
-            //uploadCameraPhoto(photoURI);
-            //setProfileImageView();
+        else if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+                uploadCameraPhoto(photoURI);
         }
     }
 
-    //TODO ovo treba kad korisnik hoce nesto da postuje
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "BMP_profile_picture_" + timeStamp + "_";
+        String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
-                ".bmp",         /* suffix */
+                ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
 
@@ -251,7 +242,7 @@ public class HumanFragment extends Fragment {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         spinner.setVisibility(View.GONE);
                         Toast.makeText(context, "Uploaded", Toast.LENGTH_SHORT).show();
-                        //setProfileImageView();
+                        setProfileImageView();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -268,14 +259,10 @@ public class HumanFragment extends Fragment {
 
 }
 
-    //TODO cache image
     private void setProfileImageView() {
         StorageReference ref = storage.getReference().child("images/" + mUser.getDisplayName() + "/profileImage.jpg");
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-
         try {
-            final File localFile = File.createTempFile("Images", "jpeg");
+            final File localFile = File.createTempFile("Images", "jpg");
             ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -294,6 +281,7 @@ public class HumanFragment extends Fragment {
         }
 
     }
+
     private void saveHuman(){
         String fname = firstname.getText().toString();
         String lname = lastname.getText().toString();
