@@ -81,9 +81,6 @@ public class HumanFragment extends Fragment {
     String mCurrentPhotoPath;
     private ProgressBar spinner;
 
-
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -272,7 +269,7 @@ public class HumanFragment extends Fragment {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(context, "Failure", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Failure", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -282,11 +279,12 @@ public class HumanFragment extends Fragment {
 
     }
 
+
     private void saveHuman(){
         String fname = firstname.getText().toString();
         String lname = lastname.getText().toString();
         String ame = aboutme.getText().toString();
-        User u = new User(mUser.getEmail(),fname,lname,mUser.getDisplayName(),ame,null);
+        User u = new User(mUser.getEmail(),fname,lname,mUser.getDisplayName(),ame,null,null);
         mDatabase.child("users").child(mUser.getDisplayName()).setValue(u);
         Toast.makeText(context,"Saved",Toast.LENGTH_LONG).show();
     }

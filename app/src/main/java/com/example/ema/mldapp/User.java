@@ -19,12 +19,13 @@ public class User {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String email, String firstName, String lastName ,String username,String aboutMe,String profileImageUrl) {
+    public User(String email, String firstName, String lastName ,String username,String aboutMe,String profileImageUrl, Pet pet) {
         this.email = email;
         this.firstname = firstName;
         this.lastname = lastName;
         this.username = username;
         this.aboutMe = aboutMe;
         this.profileImageUrl = profileImageUrl;
+        this.pet = pet;
     }
 }
