@@ -8,7 +8,9 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -18,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
+      private Toolbar toolbar;
       private FirebaseAuth mAuth;
 //    private DrawerLayout mDrawerLayout;
 //    private ActionBarDrawerToggle mToggle;
@@ -28,8 +31,10 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        toolbar = findViewById(R.id.home_activity_toolbar);
+        setSupportActionBar(toolbar);
         mAuth = FirebaseAuth.getInstance();
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         NavigationView sideNavigation = (NavigationView)findViewById(R.id.sideNavigation);
         sideNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -58,6 +63,12 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 //        mToggle.syncState();
 //
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.appbar, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     private boolean loadFragment(Fragment fragment){
@@ -101,10 +112,13 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-//        if(mToggle.onOptionsItemSelected(item))
-//        {
-//            return true;
-//        }
+        switch(item.getItemId()){
+            case R.id.action_sidebar:
+
+                break;
+
+
+        }
         return super.onOptionsItemSelected(item);
     }
 }
