@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.PeopleViewHolder> {
     private String[] mData;
+    private ArrayList<String> mDataList;
     private Context mContext;
 
     public static class PeopleViewHolder extends RecyclerView.ViewHolder {
@@ -36,8 +38,8 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
         }
     }
 
-        public PeopleDataAdapter(String[] myDataset,Context context) {
-            mData = myDataset;
+        public PeopleDataAdapter(ArrayList<String> myDataset,Context context) {
+            mDataList = myDataset;
             mContext = context;
         }
 
@@ -57,14 +59,14 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     public void onBindViewHolder(@NonNull PeopleViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mData[position]);
+        holder.mTextView.setText(mDataList.get(position));
 
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mData.length;
+        return mDataList.size();
     }
 
 }

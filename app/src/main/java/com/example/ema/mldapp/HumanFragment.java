@@ -284,7 +284,7 @@ public class HumanFragment extends Fragment {
         String fname = firstname.getText().toString();
         String lname = lastname.getText().toString();
         String ame = aboutme.getText().toString();
-        User u = new User(mUser.getEmail(),fname,lname,mUser.getDisplayName(),ame,null,null);
+        User u = new User(mUser.getEmail(),fname,lname,mUser.getDisplayName(),ame);
         mDatabase.child("users").child(mUser.getDisplayName()).setValue(u);
         Toast.makeText(context,"Saved",Toast.LENGTH_LONG).show();
     }

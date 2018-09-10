@@ -7,9 +7,11 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
-
-      private Toolbar toolbar;
+    public static final int FRIENDS_ACTIVITY = 1;
+    public static final String TAG = "HomeActivity.class";
+    private Toolbar toolbar;
       private FirebaseAuth mAuth;
 //    private DrawerLayout mDrawerLayout;
 //    private ActionBarDrawerToggle mToggle;
@@ -30,6 +33,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        int previous = 0;
 
         toolbar = findViewById(R.id.home_activity_toolbar);
         setSupportActionBar(toolbar);
@@ -55,7 +59,22 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
-        loadFragment(new FeedFragment());
+        try{
+            previous = getIntent().getExtras().getInt("previous");
+        }
+        catch (Exception e){
+            Log.d(TAG,"Error retrieving Intent's extras");
+        }
+
+        if(previous == FRIENDS_ACTIVITY){
+            loadFragment(new PeopleFragment());
+            navigation.setSelectedItemId(R.id.navigation_people);
+
+        }
+        else{
+            loadFragment(new FeedFragment());
+            navigation.setSelectedItemId(R.id.navigation_home);
+        }
 //        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 //        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.open,R.string.close);
 //
@@ -84,11 +103,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
-//
-//     case R.id.side_logout:
-//            mAuth.signOut();
-//    startActivity(new Intent(HomeActivity.this,MainActivity.class));
-//                break;
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
@@ -111,13 +125,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch(item.getItemId()){
             case R.id.action_sidebar:
-
                 break;
-
-
         }
         return super.onOptionsItemSelected(item);
     }

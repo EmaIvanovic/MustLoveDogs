@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                         DatabaseReference usersRef = ref.child("users");
                         usersRef.orderByKey().equalTo(uname).addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                            public void onDataChange(@NonNull  DataSnapshot dataSnapshot) {
                                 if(dataSnapshot.exists())
                                     validateTxt.setText("Username already taken");
                                 else
@@ -92,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
                                 Log.d("RegisterActivity", "Database error retrieving data");
                             }
                         });
@@ -243,7 +243,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void writeNewUser(String username, String email, String firstName, String lastName) {
 
-        User u = new User(email,firstName,lastName,username,null,null,null);
+        User u = new User(email,firstName,lastName,username,null);
         mDatabase.child("users").child(username).setValue(u);
 //        mDatabase.child("users").child(username).child("username").setValue(username);
 //        mDatabase.child("users").child(username).child("email").setValue(email);

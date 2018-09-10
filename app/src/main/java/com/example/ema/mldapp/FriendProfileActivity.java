@@ -11,10 +11,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 public class FriendProfileActivity extends AppCompatActivity {
-
+    public static final int FRIENDS_ACTIVITY=1;
+    private FirebaseAuth mAuth;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
     TextView username_TextView;
-
+    private FirebaseUser mUser;
+    private DatabaseReference mDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +34,17 @@ public class FriendProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        String displayName = mUser.getDisplayName();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = mDatabase.child("users");
+        DatabaseReference specUserRef = ref.child(displayName);
+        DatabaseReference friendsRef = specUserRef.child("friends");
+
+
 
         username_TextView = findViewById(R.id.friendUsername_tv);
         String value = getIntent().getExtras().getString("username");
@@ -36,6 +58,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case android.R.id.home:
                 Intent intent= new Intent(this,HomeActivity.class);
+                intent.putExtra("previous",FRIENDS_ACTIVITY);
                 startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
