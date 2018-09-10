@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference rootRef;
     private static final String TAG = "MainActivity";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
