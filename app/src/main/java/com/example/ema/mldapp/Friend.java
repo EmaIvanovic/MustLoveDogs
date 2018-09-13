@@ -1,9 +1,10 @@
 package com.example.ema.mldapp;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import java.io.Serializable;
 
 @IgnoreExtraProperties
-public class Friend {
+public class Friend implements Serializable {
 
     public String username;
 

@@ -20,18 +20,14 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
 
     public static class PeopleViewHolder extends RecyclerView.ViewHolder {
         private TextView mTextView;
-        public PeopleViewHolder(final View itemView) {
+        public PeopleViewHolder(final View itemView,final Context context) {
             super(itemView);
-
             mTextView = (TextView) itemView.findViewById(R.id.friendUsername_text); // Creating TextView object with the id of textView from item_row.xml
             mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Context context = v.getContext();
-                    Bundle extras = new Bundle();
-                    extras.putString("username",mTextView.getText().toString());
                     Intent intent = new Intent(context, FriendProfileActivity.class);
-                    intent.putExtras(extras);
+                    intent.putExtra("username",mTextView.getText().toString());
                     context.startActivity(intent);
                 }
             });
@@ -49,7 +45,7 @@ public class PeopleDataAdapter extends RecyclerView.Adapter<PeopleDataAdapter.Pe
     public PeopleDataAdapter.PeopleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(mContext).inflate(R.layout.people_recycle_row, parent, false);
-        PeopleViewHolder vh = new PeopleViewHolder(v);
+        PeopleViewHolder vh = new PeopleViewHolder(v,mContext);
 
         return vh;
     }

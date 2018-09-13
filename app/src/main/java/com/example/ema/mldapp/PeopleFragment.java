@@ -61,10 +61,14 @@ public class PeopleFragment extends Fragment {
         DatabaseReference specUserRef = ref.child(displayName);
         DatabaseReference friendsRef = specUserRef.child("friends");
 
-        DatabaseReference specFriendRef = friendsRef.push();
-        specFriendRef.setValue(new Friend("Emili"));
-        DatabaseReference specFriendRef1 = friendsRef.push();
-        specFriendRef1.setValue(new Friend("Mladja"));
+        DatabaseReference specFriendRef = friendsRef.child("EmaIv");
+        specFriendRef.setValue(new Friend("EmaIv"));
+        DatabaseReference specFriendRef1 = friendsRef.child("OpetNovi");
+        specFriendRef1.setValue(new Friend("OpetNovi"));
+        DatabaseReference specFriendRef2 = friendsRef.child("Mlaki");
+        specFriendRef2.setValue(new Friend("Mlaki"));
+
+
 
         dataArray = new ArrayList<>();
         mAdapter = new PeopleDataAdapter(dataArray,context);

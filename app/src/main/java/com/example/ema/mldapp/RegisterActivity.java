@@ -28,6 +28,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -195,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     });
 
                             writeNewUser(userName,email,firstName,lastName);
-                            startActivity(new Intent(RegisterActivity.this,ProfileActivity.class));
+                            startActivity(new Intent(RegisterActivity.this,LogInActivity.class));
                         }} else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -242,15 +246,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void writeNewUser(String username, String email, String firstName, String lastName) {
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
 
-        User u = new User(email,firstName,lastName,username,null);
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c);
+        User u = new User(email,firstName,lastName,username,null,formattedDate,"Just joined",0);
         mDatabase.child("users").child(username).setValue(u);
-//        mDatabase.child("users").child(username).child("username").setValue(username);
-//        mDatabase.child("users").child(username).child("email").setValue(email);
-//        mDatabase.child("users").child(username).child("firstname").setValue(firstName);
-//        mDatabase.child("users").child(username).child("lastname").setValue(lastName);
-
-        //mDatabase.child("users").child(username).child("profileURL").setValue(lastName);
-
     }
 }

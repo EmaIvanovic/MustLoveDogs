@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 //TODO compress bitmap to JPEG before uploading to storage
@@ -108,10 +109,13 @@ public class HumanFragment extends Fragment {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    User usr = dataSnapshot.getValue(User.class);
-                    firstname.setText(usr.firstname);
-                    lastname.setText(usr.lastname);
-                    aboutme.setText(usr.aboutMe);
+                    String fname = (String) dataSnapshot.child("firstname").getValue();
+                    String lname = (String) dataSnapshot.child("lastname").getValue();
+                    String ame = (String) dataSnapshot.child("aboutMe").getValue();
+                firstname.setText(fname);
+                lastname.setText(lname);
+                aboutme.setText(ame);
+
             }
 
             @Override
@@ -120,6 +124,7 @@ public class HumanFragment extends Fragment {
             }
         };
         specUserRef.addValueEventListener(valueEventListener);
+
 
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
