@@ -1,10 +1,13 @@
 package com.example.ema.mldapp;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,11 +17,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -54,16 +55,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         posts = new ArrayList<Post>();
 
         loadPosts();
-
-        /*posts.add(
-                new Post(
-                        "Hello everyone! I am new here! This app is awesome!",
-                        "post"));
-
-        posts.add(
-                new Post(
-                        "I lost my dog! Please help!",
-                        "lost dog"));*/
 
         adapter = new PostAdapter(this);
 
@@ -181,10 +172,17 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<HashMap<String, String>> p = (ArrayList<HashMap<String, String>>) dataSnapshot.getValue();
                 int i = 0;
+                if(p == null){
+                    return;
+                }
                 while(i < p.size()){
                     String d = p.get(i).get("desc");
                     String t = p.get(i).get("typeOfPost");
-                    posts.add(new Post(d,t));
+                    String la =  p.get(i).get("lat");
+                    String lng = p.get(i).get("lng");
+                    String img = p.get(i).get("imgPath");
+
+                    posts.add(new Post(d,t, la, lng, img));
                     i++;
                 }
             }

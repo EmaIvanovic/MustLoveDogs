@@ -19,11 +19,6 @@ import java.util.ArrayList;
 
 public class FeedFragment extends Fragment {
 
-    //private FirebaseAuth mAuth;
-    //private FirebaseUser user;
-
-    //private TextView feedText;
-
     @Override
     public void onPause() {
         super.onPause();
@@ -35,13 +30,6 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, null);
-
-        /*mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-
-        feedText = view.findViewById(R.id.feedTextView);
-        String message = "Hello " + user.getDisplayName() + "!";
-        feedText.setText(message);*/
 
         //getting the recyclerview from xml
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);

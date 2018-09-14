@@ -7,21 +7,21 @@ public class Post implements Serializable {
 
     private String desc;
     private String typeOfPost;
-    //private String pictureURI;
+    private String lat;
+    private String lng;
+    private String imgPath;
 
-    /*public String getPictureURI() {
-        return pictureURI;
-    }*/
-    public String getDesc() {
-        return desc;
-    }
-    public String getTypeOfPost() {
-        return typeOfPost;
-    }
+    public String getLat() { return lat; }
+    public String getLng() { return lng; }
+    public String getDesc() { return desc; }
+    public String getTypeOfPost() { return typeOfPost; }
+    public String getImgPath() { return imgPath; }
 
-    public Post(String d, String t/*, String p*/) {
+    public Post(String d, String t, String la, String lg, String i) {
         desc = d;
         typeOfPost = t;
-        //pictureURI = p;
+        lat = la;
+        lng = lg;
+        imgPath = i;
     }
 }

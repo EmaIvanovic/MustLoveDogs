@@ -40,9 +40,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity()));
+
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions()
+                .position(sydney)
+                .title("Marker in Sydney")
+                .snippet("This is starting marker. Very nice info included. Lost dog, description, all that stuff.")
+        );
+
+        for(int i = 0; i < HomeActivity.posts.size(); i++){
+
+            LatLng postLoc = new LatLng(Double.parseDouble(HomeActivity.posts.get(i).getLat()), Double.parseDouble(HomeActivity.posts.get(i).getLng()));
+            mMap.addMarker(new MarkerOptions()
+                    .position(postLoc)
+                    .title(HomeActivity.posts.get(i).getTypeOfPost())
+                    .snippet(HomeActivity.posts.get(i).getDesc())
+            ).setTag(HomeActivity.posts.get(i));
+        }
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }

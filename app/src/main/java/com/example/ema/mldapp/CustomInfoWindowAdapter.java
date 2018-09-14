@@ -3,13 +3,13 @@ package com.example.ema.mldapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,38 +20,38 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 
-//Adapter za RecyclerView iz FeedFragment
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
+    private final View mWindow;
+    private Context mContext;
     private Bitmap bm;
     String img;
 
-    //this context we will use to inflate the layout
-    private Context mCtx;
-
-    //getting the context and product list with constructor
-    public PostAdapter(Context mCtx) {
-        this.mCtx = mCtx;
+    public CustomInfoWindowAdapter(Context context) {
+        mContext = context;
+        mWindow = LayoutInflater.from(context).inflate(R.layout.layout_post, null);
     }
 
-    @Override
-    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //inflating and returning our view holder
-        LayoutInflater inflater = LayoutInflater.from(mCtx);
-        View view = inflater.inflate(R.layout.layout_post, null);
-        return new PostViewHolder(view);
-    }
+    private void rendowWindowText(Marker marker, View view){
 
-    @Override
-    public void onBindViewHolder(PostViewHolder holder, int position) {
-        //getting the product of the specified position
-        Post p = HomeActivity.posts.get(position);
+        String title = marker.getTitle();
+        TextView tvTitle = (TextView) view.findViewById(R.id.txtTypeOfPost);
 
-        //binding the data with the viewholder views
-        holder.txtDesc.setText(p.getDesc());
-        holder.txtTypeOfPost.setText(p.getTypeOfPost());
+        if(!title.equals("")){
+            tvTitle.setText(title);
+        }
 
-        img = p.getImgPath();
+        String snippet = marker.getSnippet();
+        TextView tvSnippet = (TextView) view.findViewById(R.id.txtDesc);
+
+        if(!snippet.equals("")){
+            tvSnippet.setText(snippet);
+        }
+
+        Post post = (Post) marker.getTag();
+        img = post.getImgPath();
+        ImageView imgView = (ImageView) view.findViewById(R.id.imageView);
+
         if(img != ""){
             try{
                 Thread t = new Thread(new Runnable() {
@@ -62,9 +62,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 t.start();
                 t.join();
 
-                holder.imageView.setImageBitmap(bm);
+                imgView.setImageBitmap(bm);
             }catch(InterruptedException ie){}
         }
+
     }
 
     public void getPostImage(String imgPath){
@@ -86,22 +87,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     @Override
-    public int getItemCount() {
-        return HomeActivity.posts.size();
+    public View getInfoWindow(Marker marker) {
+        rendowWindowText(marker, mWindow);
+        return mWindow;
     }
 
-    class PostViewHolder extends RecyclerView.ViewHolder {
-
-        TextView txtDesc, txtTypeOfPost;
-        ImageView imageView;
-
-        public PostViewHolder(View itemView) {
-            super(itemView);
-
-            txtDesc = itemView.findViewById(R.id.txtDesc);
-            txtTypeOfPost = itemView.findViewById(R.id.txtTypeOfPost);
-            imageView = itemView.findViewById(R.id.imageView);
-        }
+    @Override
+    public View getInfoContents(Marker marker) {
+        rendowWindowText(marker, mWindow);
+        return mWindow;
     }
-
 }

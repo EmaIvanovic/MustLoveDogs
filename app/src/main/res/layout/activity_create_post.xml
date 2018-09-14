@@ -114,7 +114,7 @@
         android:layout_marginLeft="148dp"
         android:layout_marginStart="148dp"
         android:layout_marginTop="32dp"
-        android:text="Add photo(s)"
+        android:text="Add photo"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
