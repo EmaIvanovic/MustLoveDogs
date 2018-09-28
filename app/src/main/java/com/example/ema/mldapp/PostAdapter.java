@@ -52,7 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.txtTypeOfPost.setText(p.getTypeOfPost());
 
         img = p.getImgPath();
-        if(img != ""){
+        if(!img.equals("")){
             try{
                 Thread t = new Thread(new Runnable() {
                     public void run() {
@@ -100,7 +100,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
             txtDesc = itemView.findViewById(R.id.txtDesc);
             txtTypeOfPost = itemView.findViewById(R.id.txtTypeOfPost);
-            imageView = itemView.findViewById(R.id.imageView);
+            imageView = itemView.findViewById(R.id.imageViewPost);
         }
     }
 

@@ -29,7 +29,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     public CustomInfoWindowAdapter(Context context) {
         mContext = context;
-        mWindow = LayoutInflater.from(context).inflate(R.layout.layout_post, null);
+        mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_window, null);
     }
 
     private void rendowWindowText(Marker marker, View view){
@@ -50,9 +50,9 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         Post post = (Post) marker.getTag();
         img = post.getImgPath();
-        ImageView imgView = (ImageView) view.findViewById(R.id.imageView);
+        ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
 
-        if(img != ""){
+        if(!img.equals("")){
             try{
                 Thread t = new Thread(new Runnable() {
                     public void run() {
@@ -62,7 +62,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                 t.start();
                 t.join();
 
-                imgView.setImageBitmap(bm);
+                iView.setImageBitmap(bm);
             }catch(InterruptedException ie){}
         }
 

@@ -17,8 +17,15 @@ public class User {
     public Pet pet;
     public ArrayList<Friend> friends;
     public int activityPoints;
+    private String lat;
+    private String lng;
 
 
+    public String getLat() { return lat; }
+    public String getLng() { return lng; }
+
+    public void setLat(String lat) { this.lat = lat; }
+    public void setLng(String lng) { this.lng = lng; }
 
 
     public User() {
@@ -34,6 +41,10 @@ public class User {
         this.profileImageUrl = profileImageUrl;
         this.pet = pet;
         this.friends = friends;
+        /*
+         * lat = lt;
+         * lng = lg;
+         */
     }
 
     public User(String email, String firstName, String lastName ,String username,String aboutMe){
@@ -42,6 +53,10 @@ public class User {
         this.lastname = lastName;
         this.username = username;
         this.aboutMe = aboutMe;
+        /*
+         * lat = lt;
+         * lng = lg;
+         */
     }
     public User(String email, String firstName, String lastName ,String username,String aboutMe,String joined, String activityLevel,int activityPoints){
         this.email = email;
@@ -52,5 +67,9 @@ public class User {
         this.activityLevel = activityLevel;
         this.joined = joined;
         this.activityPoints = activityPoints;
+        /*
+         * lat = lt;
+         * lng = lg;
+         */
     }
 }
