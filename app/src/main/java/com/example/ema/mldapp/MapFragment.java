@@ -1,5 +1,6 @@
 package com.example.ema.mldapp;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,13 +17,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private double m_radius = 0;
+    private boolean friends_enabled = false;
 
     @Nullable
     @Override
@@ -42,8 +47,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 if(v.getId() == R.id.btnRadius)
                 {
                     EditText t = getActivity().findViewById(R.id.txtRadius);
-                    double m_radius = Double.parseDouble(t.getText().toString());
+                    m_radius = Double.parseDouble(t.getText().toString());
                     AddPostMarkers(RadiusSearch(m_radius));
+                }
+            }
+        });
+
+        Button btnFred = getActivity().findViewById(R.id.btnMapFriends);
+        btnFred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId() == R.id.btnMapFriends)
+                {
+                    Button btn = (Button) v;
+                    if(friends_enabled){
+
+                        friends_enabled = false;
+                        btn.setText("Show friends");
+
+                        mMap.clear();
+
+                        SetMainMarker();
+
+                        if(m_radius == 0)
+                            AddPostMarkers(HomeActivity.userPosts);
+                        else
+                            AddPostMarkers(RadiusSearch(m_radius));
+                    }
+                    else{
+
+                        friends_enabled = true;
+                        btn.setText("Hide friends");
+                        AddFriendMarkers();
+                    }
+
                 }
             }
         });
@@ -60,25 +97,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity()));
 
-        AddPostMarkers(HomeActivity.posts);
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
 
-        // Add a marker on user's location and move the camera
+                if(marker.getSnippet().equals(""))
+                {
+                    Intent intent = new Intent(getActivity(), FriendProfileActivity.class);
+                    intent.putExtra("username", marker.getTitle());
+                    getActivity().startActivity(intent);
+                }
+            }
+        });
+
+        AddPostMarkers(HomeActivity.userPosts);
+
         SetMainMarker();
     }
 
     void SetMainMarker(){
-        LatLng sydney = new LatLng(-34, 151);
 
         HomeActivity.currentUser.setLat("-34");
         HomeActivity.currentUser.setLng("151");
 
+        LatLng userLoc = new LatLng(Double.parseDouble(HomeActivity.currentUser.getLat()), Double.parseDouble(HomeActivity.currentUser.getLng()));
+
         mMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney")
-                .snippet("This is starting marker. Very nice info included. Lost dog, description, all that stuff.")
+                .position(userLoc)
+                .title("You are here !!!")
+                .snippet("This is your current location.")
         );
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 12));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 12));
     }
 
     ArrayList<Post> RadiusSearch(double radius){
@@ -86,16 +136,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         ArrayList<Post> wantedPosts = new ArrayList<Post>();
         LatLng u = new LatLng(Double.parseDouble(HomeActivity.currentUser.getLat()), Double.parseDouble(HomeActivity.currentUser.getLng()));
 
-        for(int i = 0; i < HomeActivity.posts.size(); i++){
+        for(int i = 0; i < HomeActivity.userPosts.size(); i++){
 
-            LatLng p = new LatLng(Double.parseDouble(HomeActivity.posts.get(i).getLat()), Double.parseDouble(HomeActivity.posts.get(i).getLng()));
+            LatLng p = new LatLng(Double.parseDouble(HomeActivity.userPosts.get(i).getLat()), Double.parseDouble(HomeActivity.userPosts.get(i).getLng()));
 
             float[] dist = new float[3];
             Location.distanceBetween(u.latitude, u.longitude, p.latitude, p.longitude, dist);
             double distance = dist[0]/1000;
 
             if(radius > distance)
-                wantedPosts.add(HomeActivity.posts.get(i));
+                wantedPosts.add(HomeActivity.userPosts.get(i));
         }
 
         return wantedPosts;
@@ -118,4 +168,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             ).setTag(p.get(i));
         }
     }
+
+    void AddFriendMarkers(){
+
+        for(int i = 0; i < HomeActivity.friendNicks.size(); i++){
+
+            LatLng postLoc = new LatLng(-34 - ( + 1)*0.2, 151 - (i + 1)*0.15);
+            mMap.addMarker(new MarkerOptions()
+                    .position(postLoc)
+                    .title(HomeActivity.friendNicks.get(i))
+                    .snippet("")
+            );
+        }
+    }
+
 }
