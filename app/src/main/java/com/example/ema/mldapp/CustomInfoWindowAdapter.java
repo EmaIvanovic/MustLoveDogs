@@ -25,6 +25,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private final View mWindow;
     private Context mContext;
     String img;
+    String title;
     private Bitmap bm;
 
     public CustomInfoWindowAdapter(Context context) {
@@ -34,7 +35,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private void rendowWindowText(Marker marker, View view){
 
-        String title = marker.getTitle();
+        title = marker.getTitle();
         TextView tvTitle = (TextView) view.findViewById(R.id.txtTypeOfPost);
 
         if(!title.equals("")){
@@ -46,24 +47,48 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         if(!snippet.equals("")){
             tvSnippet.setText(snippet);
-        }
 
-        Post post = (Post) marker.getTag();
-        img = post.getImgPath();
-        ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+            if(marker.getTag() == null)
+                return;
 
-        if(!img.equals("")){
-            try{
-                Thread t = new Thread(new Runnable() {
+            Post post = (Post) marker.getTag();
+            img = post.getImgPath();
+            ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+
+            if(!img.equals("")){
+                try{
+                    Thread t = new Thread(new Runnable() {
                     public void run() {
-                        getPostImage(img);
-                    }
+                            getPostImage(img);
+                        }
                 });
-                t.start();
-                t.join();
+                    t.start();
+                    t.join();
 
-                iView.setImageBitmap(bm);
-            }catch(InterruptedException ie){}
+                    iView.setImageBitmap(bm);
+                }catch(InterruptedException ie){}
+            }
+        }
+        else{
+
+            tvSnippet.setText("");
+
+            ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+            if(!title.equals("")){
+                try{
+                    Thread t = new Thread(new Runnable() {
+                        public void run() {
+                            getFriendImage(title);
+                        }
+                    });
+                    t.start();
+                    t.join();
+
+                    iView.setImageBitmap(bm);
+
+                }catch(InterruptedException ie){}
+            }
+
         }
 
     }
@@ -73,6 +98,24 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser mUser = mAuth.getCurrentUser();
         StorageReference ref = storage.getReference().child("images/" + mUser.getDisplayName() + "/" + imgPath + ".jpg");
+        try{
+            final File localFile = File.createTempFile("Images","jpg");
+            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    bm = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                }
+            });
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getFriendImage(String nn){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser mUser = mAuth.getCurrentUser();
+        StorageReference ref = storage.getReference().child("images/" + nn + "/profileImage.jpg");
         try{
             final File localFile = File.createTempFile("Images","jpg");
             ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {

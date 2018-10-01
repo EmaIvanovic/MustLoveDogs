@@ -45,7 +45,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     @Override
     public void onBindViewHolder(PostViewHolder holder, int position) {
         //getting the product of the specified position
-        Post p = HomeActivity.posts.get(position);
+        Post p = HomeActivity.userPosts.get(position);
 
         //binding the data with the viewholder views
         holder.txtDesc.setText(p.getDesc());
@@ -87,7 +87,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public int getItemCount() {
-        return HomeActivity.posts.size();
+        return HomeActivity.userPosts.size();
     }
 
     class PostViewHolder extends RecyclerView.ViewHolder {
