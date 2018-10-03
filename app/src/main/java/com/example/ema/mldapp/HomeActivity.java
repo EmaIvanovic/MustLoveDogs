@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -33,6 +34,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     public static ArrayList<Post> friendPosts;
     public static ArrayList<String> friendNicks;
     public static PostAdapter adapter;
+    public int pointsTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         friendPosts = new ArrayList<Post>();
         friendNicks = new ArrayList<>();
 
+        pointsTotal = 0;
         loadPosts();
         getFriends();
 
@@ -171,6 +174,25 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private void savePosts(){
         DatabaseReference newPostRef = mDatabase.child("users").child(mUser.getDisplayName()).child("posts");
         newPostRef.setValue(userPosts);
+        DatabaseReference newPostRef1 = mDatabase.child("users").child(mUser.getDisplayName());//.child("activityPoints");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long points = 0;
+                if(dataSnapshot.child("activityPoints").getValue() != null)
+                {
+                    points = (long)dataSnapshot.child("activityPoints").getValue();
+                    points += 1;
+                }
+                dataSnapshot.child("activityPoints").getRef().setValue(points);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HomeActivity.class", "Database error retrieving data for totalPoints");
+            }
+        };
+        newPostRef1.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void getFriendsPosts() {
@@ -212,10 +234,12 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         friendsRef.addValueEventListener(
                 new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //Get map of users in datasnapshot
-                        collectFriendNicks((Map<String,Object>) dataSnapshot.getValue());
-                        getFriendsPosts();
+                        if(dataSnapshot.getValue() != null){
+                            collectFriendNicks((Map<String,Object>) dataSnapshot.getValue());
+                            getFriendsPosts();
+                        }
                     }
 
                     @Override

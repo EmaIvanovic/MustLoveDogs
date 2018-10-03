@@ -25,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,28 @@ public class PeopleFragment extends Fragment {
                     if(friend != null)
                         dataArray.add(friend.username);
                 }
+                dataArray.sort(new Comparator<Friend>() {
+                    @Override
+                    public int compare(Friend f1, Friend f2) {
+                        DatabaseReference newPostRef1 = mDatabase.child("users").child(f1.username);//.child("activityPoints");
+                        ValueEventListener valueEventListener = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                long points = 0;
+                                if(dataSnapshot.child("activityPoints").getValue() != null)
+                                {
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.d("HomeActivity.class", "Database error retrieving data for totalPoints");
+                            }
+                        };
+                        newPostRef1.addListenerForSingleValueEvent(valueEventListener);                     }
+                });
                 mAdapter = new PeopleDataAdapter(dataArray,context);
                 mRecyclerView.setAdapter(mAdapter);
                 //Toast.makeText(context, "Success reading friends", Toast.LENGTH_LONG).show();

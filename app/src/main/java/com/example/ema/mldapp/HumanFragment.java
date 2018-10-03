@@ -245,6 +245,7 @@ public class HumanFragment extends Fragment {
                         spinner.setVisibility(View.GONE);
                         Toast.makeText(context, "Uploaded", Toast.LENGTH_SHORT).show();
                         setProfileImageView();
+                        updateActivityPoints();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -270,6 +271,7 @@ public class HumanFragment extends Fragment {
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Bitmap bm = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                     profileImage.setImageBitmap(bm);
+                    updateActivityPoints();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -284,13 +286,56 @@ public class HumanFragment extends Fragment {
 
     }
 
+    private void updateActivityPoints(){
+        DatabaseReference newPostRef1 = mDatabase.child("users").child(mUser.getDisplayName());//.child("activityPoints");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long points = 0;
+                if(dataSnapshot.child("activityPoints").getValue() != null)
+                {
+                    points = (long)dataSnapshot.child("activityPoints").getValue();
+                    points += 1;
+                }
+                dataSnapshot.child("activityPoints").getRef().setValue(points);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HomeActivity.class", "Database error retrieving data for totalPoints");
+            }
+        };
+        newPostRef1.addListenerForSingleValueEvent(valueEventListener);
+    }
 
     private void saveHuman(){
         String fname = firstname.getText().toString();
         String lname = lastname.getText().toString();
         String ame = aboutme.getText().toString();
-        User u = new User(mUser.getEmail(),fname,lname,mUser.getDisplayName(),ame);
-        mDatabase.child("users").child(mUser.getDisplayName()).setValue(u);
+//        User u = new User(mUser.getEmail(),fname,lname,mUser.getDisplayName(),ame);
+        mDatabase.child("users").child(mUser.getDisplayName()).child("firstname").setValue(fname);
+        mDatabase.child("users").child(mUser.getDisplayName()).child("lastname").setValue(lname);
+        mDatabase.child("users").child(mUser.getDisplayName()).child("aboutMe").setValue(ame);
+
+        DatabaseReference newPostRef1 = mDatabase.child("users").child(mUser.getDisplayName());//.child("activityPoints");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long points = 0;
+                if(dataSnapshot.child("activityPoints").getValue() != null)
+                {
+                    points = (long)dataSnapshot.child("activityPoints").getValue();
+                    points += 1;
+                }
+                dataSnapshot.child("activityPoints").getRef().setValue(points);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HomeActivity.class", "Database error retrieving data for totalPoints");
+            }
+        };
+        newPostRef1.addListenerForSingleValueEvent(valueEventListener);
         Toast.makeText(context,"Saved",Toast.LENGTH_LONG).show();
     }
 }
