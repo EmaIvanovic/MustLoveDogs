@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +35,7 @@ public class PeopleFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private CheckBox sortCheckBox;
     private Context context;
     private FirebaseUser mUser;
     private DatabaseReference mDatabase;
@@ -49,6 +51,7 @@ public class PeopleFragment extends Fragment {
 
         context = this.getActivity();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.people_recycler_view);
+
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -85,28 +88,8 @@ public class PeopleFragment extends Fragment {
                     if(friend != null)
                         dataArray.add(friend.username);
                 }
-                dataArray.sort(new Comparator<Friend>() {
-                    @Override
-                    public int compare(Friend f1, Friend f2) {
-                        DatabaseReference newPostRef1 = mDatabase.child("users").child(f1.username);//.child("activityPoints");
-                        ValueEventListener valueEventListener = new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                long points = 0;
-                                if(dataSnapshot.child("activityPoints").getValue() != null)
-                                {
+                if(!sortCheckBox.isChecked())
 
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.d("HomeActivity.class", "Database error retrieving data for totalPoints");
-                            }
-                        };
-                        newPostRef1.addListenerForSingleValueEvent(valueEventListener);                     }
-                });
                 mAdapter = new PeopleDataAdapter(dataArray,context);
                 mRecyclerView.setAdapter(mAdapter);
                 //Toast.makeText(context, "Success reading friends", Toast.LENGTH_LONG).show();

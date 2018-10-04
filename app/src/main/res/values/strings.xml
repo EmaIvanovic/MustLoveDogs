@@ -10,5 +10,6 @@
     <string name="action_sidebar">Navigate</string>
     <string name="title_activity_friend_profile">FriendProfileActivity</string>
     <string name="title_activity_gmap">Map</string>
+    <string name="title_activity_most_active_users">MostActiveUsersActivity</string>
 
 </resources>
