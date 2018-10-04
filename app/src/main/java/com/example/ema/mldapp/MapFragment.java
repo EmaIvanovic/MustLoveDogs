@@ -70,7 +70,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         SetMainMarker();
 
                         if(m_radius == 0)
-                            AddPostMarkers(HomeActivity.userPosts);
+                            AddPostMarkers(HomeActivity.friendPosts);
                         else
                             AddPostMarkers(RadiusSearch(m_radius));
                     }
@@ -110,7 +110,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        AddPostMarkers(HomeActivity.userPosts);
+        AddPostMarkers(HomeActivity.friendPosts);
 
         SetMainMarker();
     }
@@ -136,16 +136,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         ArrayList<Post> wantedPosts = new ArrayList<Post>();
         LatLng u = new LatLng(Double.parseDouble(HomeActivity.currentUser.getLat()), Double.parseDouble(HomeActivity.currentUser.getLng()));
 
-        for(int i = 0; i < HomeActivity.userPosts.size(); i++){
+        for(int i = 0; i < HomeActivity.friendPosts.size(); i++){
 
-            LatLng p = new LatLng(Double.parseDouble(HomeActivity.userPosts.get(i).getLat()), Double.parseDouble(HomeActivity.userPosts.get(i).getLng()));
+            LatLng p = new LatLng(Double.parseDouble(HomeActivity.friendPosts.get(i).getLat()), Double.parseDouble(HomeActivity.friendPosts.get(i).getLng()));
 
             float[] dist = new float[3];
             Location.distanceBetween(u.latitude, u.longitude, p.latitude, p.longitude, dist);
             double distance = dist[0]/1000;
 
             if(radius > distance)
-                wantedPosts.add(HomeActivity.userPosts.get(i));
+                wantedPosts.add(HomeActivity.friendPosts.get(i));
         }
 
         return wantedPosts;

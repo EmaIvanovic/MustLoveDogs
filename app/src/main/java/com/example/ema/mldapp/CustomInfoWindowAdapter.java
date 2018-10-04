@@ -3,11 +3,13 @@ package com.example.ema.mldapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,27 +26,30 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private final View mWindow;
     private Context mContext;
-    String img;
-    String title;
-    private Bitmap bm;
 
     public CustomInfoWindowAdapter(Context context) {
+
         mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.custom_info_window, null);
     }
 
     private void rendowWindowText(Marker marker, View view){
 
-        title = marker.getTitle();
-        TextView tvTitle = (TextView) view.findViewById(R.id.txtTypeOfPost);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser mUser = mAuth.getCurrentUser();
 
+        ImageView imView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+        imView.setVisibility(View.INVISIBLE);
+
+        String title = marker.getTitle();
+        TextView tvTitle = (TextView) view.findViewById(R.id.txtTypeOfPost);
         if(!title.equals("")){
             tvTitle.setText(title);
         }
 
         String snippet = marker.getSnippet();
         TextView tvSnippet = (TextView) view.findViewById(R.id.txtDesc);
-
         if(!snippet.equals("")){
             tvSnippet.setText(snippet);
 
@@ -52,81 +57,37 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
                 return;
 
             Post post = (Post) marker.getTag();
-            img = post.getImgPath();
-            ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
-
+            String img = post.getImgPath();
+            final ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+            iView.setVisibility(view.VISIBLE);
             if(!img.equals("")){
-                try{
-                    Thread t = new Thread(new Runnable() {
-                    public void run() {
-                            getPostImage(img);
-                        }
-                });
-                    t.start();
-                    t.join();
+                StorageReference ref = storage.getReference().child("images/" + post.getCreator() + "/" + img + ".jpg");
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
 
-                    iView.setImageBitmap(bm);
-                }catch(InterruptedException ie){}
-            }
-        }
+                        Glide.with(mContext)
+                                .load(uri)
+                                .into(iView);
+                    }});
+            } }
         else{
 
             tvSnippet.setText("");
 
-            ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+            final ImageView iView = (ImageView) view.findViewById(R.id.imageViewPostTile);
+            iView.setVisibility(view.VISIBLE);
             if(!title.equals("")){
-                try{
-                    Thread t = new Thread(new Runnable() {
-                        public void run() {
-                            getFriendImage(title);
-                        }
-                    });
-                    t.start();
-                    t.join();
+                StorageReference ref = storage.getReference().child("images/" + title + "/profileImage.jpg");
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
 
-                    iView.setImageBitmap(bm);
-
-                }catch(InterruptedException ie){}
-            }
-
-        }
-
-    }
-
-    public void getPostImage(String imgPath){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser mUser = mAuth.getCurrentUser();
-        StorageReference ref = storage.getReference().child("images/" + mUser.getDisplayName() + "/" + imgPath + ".jpg");
-        try{
-            final File localFile = File.createTempFile("Images","jpg");
-            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    bm = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                }
-            });
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void getFriendImage(String nn){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser mUser = mAuth.getCurrentUser();
-        StorageReference ref = storage.getReference().child("images/" + nn + "/profileImage.jpg");
-        try{
-            final File localFile = File.createTempFile("Images","jpg");
-            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    bm = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                }
-            });
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+                        Glide.with(mContext)
+                                .load(uri)
+                                .into(iView);
+                    }});
+            } }
     }
 
     @Override

@@ -75,7 +75,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private DatabaseReference mDatabase;
 
-
     String typeOfPost;
     String desc;
 
@@ -231,7 +230,8 @@ public class CreatePostActivity extends AppCompatActivity {
          * cases when a location is not available.
          */
         try {
-            if (mLocationPermissionGranted) {
+            if (mLocationPermissionGranted)
+            {
                 Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
@@ -247,7 +247,7 @@ public class CreatePostActivity extends AppCompatActivity {
                             if(imgPath != null)
                                 img = imgPath.getLastPathSegment();
 
-                            Post newPost = new Post(desc, typeOfPost, String.valueOf(la), String.valueOf(lng), img);
+                            Post newPost = new Post(desc, typeOfPost, String.valueOf(la), String.valueOf(lng), img, mUser.getDisplayName());
 
                             Intent intent = new Intent();
                             intent.putExtra("New_post", newPost);

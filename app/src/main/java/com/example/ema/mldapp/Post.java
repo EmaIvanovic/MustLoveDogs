@@ -23,18 +23,21 @@ public class Post implements Serializable {
     private String lat;
     private String lng;
     private String imgPath;
+    private String creator;
 
     public String getLat() { return lat; }
     public String getLng() { return lng; }
     public String getDesc() { return desc; }
     public String getTypeOfPost() { return typeOfPost; }
     public String getImgPath() { return imgPath; }
+    public String getCreator() { return creator; }
 
-    public Post(String d, String t, String la, String lg, String i) {
+    public Post(String d, String t, String la, String lg, String i, String c) {
         desc = d;
         typeOfPost = t;
         lat = la;
         lng = lg;
         imgPath = i;
+        creator = c;
     }
 }

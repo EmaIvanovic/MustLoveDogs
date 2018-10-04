@@ -127,11 +127,11 @@ public class FriendProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.appbar, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.appbar, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
     private void setFriendImageView(){
         StorageReference ref = storage.getReference().child("images/" + friendsUsername + "/profileImage.jpg");
 

@@ -8,11 +8,9 @@
         android:id="@+id/side_profile"
         android:title="Profile"/>
     <item
-        android:id="@+id/side_settings"
-        android:title="Settings"/>
-    <item
-        android:id="@+id/side_faq"
-        android:title="FAQ"/>
+        android:id="@+id/side_leaderboard"
+        android:title="Friend's activity"/>
+
     <item
         android:id="@+id/side_logout"
         android:title="Log out"/>

@@ -73,7 +73,6 @@ public class PetFragment extends Fragment {
         profileImage = (ImageView) view.findViewById(R.id.profileImagePet);
         petName = (EditText) view.findViewById(R.id.txtPetName);
         breed = (EditText) view.findViewById(R.id.txtBreed);
-        tags = (EditText) view.findViewById(R.id.txtTags);
         femaleRadioBtn = (RadioButton) view.findViewById(R.id.btnFemale);
         maleRadioBtn = (RadioButton) view.findViewById(R.id.btnMale);
         spinner = (ProgressBar)view.findViewById(R.id.progressBarPet);
@@ -305,15 +304,7 @@ public class PetFragment extends Fragment {
             Toast.makeText(context,"Choose your pet's gender",Toast.LENGTH_LONG).show();
             return;
         }
-        String desctags = tags.getText().toString();
-        String pTags[] = null;
-        if (!desctags.equals("")) {
-            pTags = desctags.split(",");
-            for (String s : pTags) {
-                s = s.trim();
-            }
-        }
-            Pet p = new Pet(pName,pBreed,pGender,pTags);
+            Pet p = new Pet(pName,pBreed,pGender,null);
             mDatabase.child("users").child(displayName).child("pet").setValue(p);
             Toast.makeText(context,"Saved",Toast.LENGTH_LONG).show();
 

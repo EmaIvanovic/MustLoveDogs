@@ -25,12 +25,20 @@
         android:id="@+id/buttonSavePet"
         android:layout_width="123dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="72dp"
         android:backgroundTint="@color/colorPrimaryDark"
         android:text="Save"
         android:textColor="@color/colorTextWhite"
-        app:layout_constraintEnd_toEndOf="@+id/txtTags"
-        app:layout_constraintTop_toBottomOf="@+id/txtTags" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOpenCameraForPet"></Button>
+        <!--app:layout_constraintEnd_toEndOf="@+id/txtTags"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/txtTags" />-->
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout"
@@ -181,27 +189,27 @@
             tools:layout_editor_absoluteY="402dp" />
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/lblTags"
-        android:layout_width="wrap_content"
-        android:layout_height="26dp"
-        android:layout_marginTop="48dp"
-        android:text="Description tags"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/profileImagePet"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroupGender" />
+    <!--<TextView-->
+        <!--android:id="@+id/lblTags"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="26dp"-->
+        <!--android:layout_marginTop="48dp"-->
+        <!--android:text="Description tags"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+        <!--android:textSize="16sp"-->
+        <!--app:layout_constraintStart_toStartOf="@+id/profileImagePet"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/radioGroupGender" />-->
 
-    <EditText
-        android:id="@+id/txtTags"
-        android:layout_width="332dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginStart="24dp"
-        android:hint="Please use comas as separators"
-        android:inputType="textMultiLine"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lblTags" />
+    <!--<EditText-->
+        <!--android:id="@+id/txtTags"-->
+        <!--android:layout_width="332dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:layout_marginLeft="24dp"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:hint="Please use comas as separators"-->
+        <!--android:inputType="textMultiLine"-->
+        <!--android:textSize="16sp"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/lblTags" />-->
 
 </android.support.constraint.ConstraintLayout>

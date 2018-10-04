@@ -3,6 +3,10 @@ package com.example.ema.mldapp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,21 +14,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 //Adapter za RecyclerView iz FeedFragment
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
-
-    String img;
-    private Bitmap bm;
 
     //this context we will use to inflate the layout
     private Context mCtx;
@@ -43,51 +50,41 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     @Override
-    public void onBindViewHolder(PostViewHolder holder, int position) {
+    public void onBindViewHolder(final PostViewHolder holder, int position) {
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser mUser = mAuth.getCurrentUser();
+
         //getting the product of the specified position
-        Post p = HomeActivity.userPosts.get(position);
+        Post p = HomeActivity.friendPosts.get(position);
 
         //binding the data with the viewholder views
         holder.txtDesc.setText(p.getDesc());
         holder.txtTypeOfPost.setText(p.getTypeOfPost());
 
-        img = p.getImgPath();
+        String img = p.getImgPath();
+
         if(!img.equals("")){
-            try{
-                Thread t = new Thread(new Runnable() {
-                    public void run() {
-                        getPostImage(img);
-                    }
-                });
-                t.start();
-                t.join();
 
-                holder.imageView.setImageBitmap(bm);
-            }catch(InterruptedException ie){}
-        }
-    }
+            StorageReference ref = storage.getReference().child("images/" + p.getCreator() + "/" + img + ".jpg");
 
-    public void getPostImage(String imgPath){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser mUser = mAuth.getCurrentUser();
-        StorageReference ref = storage.getReference().child("images/" + mUser.getDisplayName() + "/" + imgPath + ".jpg");
-        try{
-            final File localFile = File.createTempFile("Images","jpg");
-            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    bm = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                public void onSuccess(Uri uri) {
+
+                    Glide.with(mCtx)
+                            .load(uri)
+                            .into(holder.imageView)
+                            .waitForLayout();
                 }
             });
-        }catch(IOException e){
-            e.printStackTrace();
         }
     }
 
     @Override
     public int getItemCount() {
-        return HomeActivity.userPosts.size();
+        return HomeActivity.friendPosts.size();
     }
 
     class PostViewHolder extends RecyclerView.ViewHolder {

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ public class PeopleFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private CheckBox sortCheckBox;
     private Context context;
     private FirebaseUser mUser;
     private DatabaseReference mDatabase;
@@ -48,6 +51,7 @@ public class PeopleFragment extends Fragment {
 
         context = this.getActivity();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.people_recycler_view);
+
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -61,13 +65,10 @@ public class PeopleFragment extends Fragment {
         DatabaseReference specUserRef = ref.child(displayName);
         DatabaseReference friendsRef = specUserRef.child("friends");
 
-        DatabaseReference specFriendRef = friendsRef.child("EmaIv");
-        specFriendRef.setValue(new Friend("EmaIv"));
-        DatabaseReference specFriendRef1 = friendsRef.child("OpetNovi");
-        specFriendRef1.setValue(new Friend("OpetNovi"));
+        DatabaseReference specFriendRef = friendsRef.child("Emilija");
+        specFriendRef.setValue(new Friend("Emilija"));
         DatabaseReference specFriendRef2 = friendsRef.child("Mlaki");
         specFriendRef2.setValue(new Friend("Mlaki"));
-
 
 
         dataArray = new ArrayList<>();
@@ -79,15 +80,15 @@ public class PeopleFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                for (DataSnapshot friendSnapshot : dataSnapshot.getChildren()) {
-                    Friend friend = friendSnapshot.getValue(Friend.class);
-                    if(friend != null)
-                        dataArray.add(friend.username);
+                    for (DataSnapshot friendSnapshot : dataSnapshot.getChildren()) {
+                        Friend friend = friendSnapshot.getValue(Friend.class);
+                        if(friend != null)
+                            dataArray.add(friend.username);
+                    }
+                        mAdapter = new PeopleDataAdapter(dataArray,context);
+                    mRecyclerView.setAdapter(mAdapter);
+                    //Toast.makeText(context, "Success reading friends", Toast.LENGTH_LONG).show();
                 }
-                mAdapter = new PeopleDataAdapter(dataArray,context);
-                mRecyclerView.setAdapter(mAdapter);
-                //Toast.makeText(context, "Success reading friends", Toast.LENGTH_LONG).show();
-            }
             }
 
             @Override

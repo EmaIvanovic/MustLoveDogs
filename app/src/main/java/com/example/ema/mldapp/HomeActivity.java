@@ -7,6 +7,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -65,6 +67,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                         return true;
                     case R.id.side_profile:
                         startActivity(new Intent(HomeActivity.this,ProfileActivity.class));
+                    case R.id.side_leaderboard:
+                        startActivity(new Intent(HomeActivity.this,MostActiveUsersActivity.class));
                 }
                 return false;
             }
@@ -155,8 +159,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                     String la =  p.get(i).get("lat");
                     String lng = p.get(i).get("lng");
                     String img = p.get(i).get("imgPath");
+                    String c = p.get(i).get("creator");
 
-                    userPosts.add(new Post(d,t, la, lng, img));
+                    userPosts.add(new Post(d,t, la, lng, img, c));
                     i++;
                 }
             }
@@ -169,8 +174,28 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void savePosts(){
+
         DatabaseReference newPostRef = mDatabase.child("users").child(mUser.getDisplayName()).child("posts");
         newPostRef.setValue(userPosts);
+        DatabaseReference newPostRef1 = mDatabase.child("users").child(mUser.getDisplayName());//.child("activityPoints");
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long points = 0;
+                if(dataSnapshot.child("activityPoints").getValue() != null)
+                {
+                    points = (long)dataSnapshot.child("activityPoints").getValue();
+                    points += 1;
+                }
+                dataSnapshot.child("activityPoints").getRef().setValue(points);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HomeActivity.class", "Database error retrieving data for totalPoints");
+            }
+        };
+        newPostRef1.addListenerForSingleValueEvent(valueEventListener);
     }
 
     private void getFriendsPosts() {
@@ -191,8 +216,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                         String la =  p.get(i).get("lat");
                         String lng = p.get(i).get("lng");
                         String img = p.get(i).get("imgPath");
+                        String c = p.get(i).get("creator");
 
-                        friendPosts.add(new Post(d,t, la, lng, img));
+                        friendPosts.add(new Post(d,t, la, lng, img, c));
                         i++;
                     }
                 }
@@ -227,9 +253,29 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     private void collectFriendNicks(Map<String,Object> users) {
 
-        for (Map.Entry<String, Object> entry : users.entrySet()){
-            Map singleUser = (Map) entry.getValue();
-            friendNicks.add((String) singleUser.get("username"));
+        if(users != null)
+        {
+            for (Map.Entry<String, Object> entry : users.entrySet()){
+                Map singleUser = (Map) entry.getValue();
+                friendNicks.add((String) singleUser.get("username"));
+            }
         }
     }
+
+    private ArrayList<Post> SearchByAtribute(String attribute, String param, ArrayList<Post> posts){
+
+        ArrayList<Post> wantedPosts = new ArrayList<>();
+
+        for(int i = 0; i < posts.size(); i++){
+            if (attribute.equals("nickname") && posts.get(i).getCreator().equals(param)){
+                wantedPosts.add(posts.get(i));
+            }
+            if (attribute.equals("typeOfPost") && posts.get(i).getTypeOfPost().equals(param)){
+                wantedPosts.add(posts.get(i));
+            }
+        }
+
+        return wantedPosts;
+    }
+
 }
