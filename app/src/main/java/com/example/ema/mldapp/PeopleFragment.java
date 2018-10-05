@@ -67,6 +67,7 @@ public class PeopleFragment extends Fragment {
 
         DatabaseReference specFriendRef = friendsRef.child("Emilija");
         specFriendRef.setValue(new Friend("Emilija"));
+
         DatabaseReference specFriendRef2 = friendsRef.child("Mlaki");
         specFriendRef2.setValue(new Friend("Mlaki"));
 

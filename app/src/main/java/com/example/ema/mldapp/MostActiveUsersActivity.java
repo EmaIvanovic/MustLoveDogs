@@ -102,20 +102,20 @@ public class MostActiveUsersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
+                    dataArrayUsers.clear();
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                         //User user = userSnapshot.getValue(User.class);
 
                         if(userSnapshot == null)
                             return;
 
-                        String uname = (String) dataSnapshot.child("username").getValue();
-                        int ap = (int) dataSnapshot.child("activityPoints").getValue();
+                        String uname = (String) userSnapshot.child("username").getValue();
+                        long ap = (long) userSnapshot.child("activityPoints").getValue();
 
                         User user = new User();
                         user.username = uname;
 
                         user.activityPoints = ap;
-
 
                         if (dataArray.contains(user.username))
                             dataArrayUsers.add(user);

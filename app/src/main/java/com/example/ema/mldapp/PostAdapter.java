@@ -57,11 +57,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         FirebaseUser mUser = mAuth.getCurrentUser();
 
         //getting the product of the specified position
-        Post p = HomeActivity.friendPosts.get(position);
+        Post p = null;
+
+        if(HomeActivity.isSearched)
+            p = HomeActivity.searchPost.get(position);
+        else
+            p = HomeActivity.friendPosts.get(position);
 
         //binding the data with the viewholder views
         holder.txtDesc.setText(p.getDesc());
         holder.txtTypeOfPost.setText(p.getTypeOfPost());
+        holder.txtCreator.setText("by " + p.getCreator());
 
         String img = p.getImgPath();
 
@@ -84,12 +90,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public int getItemCount() {
-        return HomeActivity.friendPosts.size();
+
+        int cnt = 0;
+
+        if(HomeActivity.isSearched)
+            cnt = HomeActivity.searchPost.size();
+        else
+            cnt = HomeActivity.friendPosts.size();
+
+        return cnt;
     }
 
     class PostViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtDesc, txtTypeOfPost;
+        TextView txtDesc, txtTypeOfPost, txtCreator;
         ImageView imageView;
 
         public PostViewHolder(View itemView) {
@@ -98,6 +112,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             txtDesc = itemView.findViewById(R.id.txtDesc);
             txtTypeOfPost = itemView.findViewById(R.id.txtTypeOfPost);
             imageView = itemView.findViewById(R.id.imageViewPost);
+            txtCreator = itemView.findViewById(R.id.txtCreator);
         }
     }
 

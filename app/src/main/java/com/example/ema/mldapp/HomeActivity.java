@@ -2,7 +2,9 @@ package com.example.ema.mldapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -11,10 +13,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +39,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private FirebaseUser mUser;
     public static ArrayList<Post> userPosts;
     public static ArrayList<Post> friendPosts;
+    public static ArrayList<Post> searchPost;
+    public static Boolean isSearched = false;
     public static ArrayList<String> friendNicks;
     public static PostAdapter adapter;
 
@@ -49,6 +57,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
         userPosts = new ArrayList<Post>();
         friendPosts = new ArrayList<Post>();
+        searchPost = new ArrayList<>();
         friendNicks = new ArrayList<>();
 
         loadPosts();
@@ -67,18 +76,23 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                         return true;
                     case R.id.side_profile:
                         startActivity(new Intent(HomeActivity.this,ProfileActivity.class));
+                        return true;
                     case R.id.side_leaderboard:
                         startActivity(new Intent(HomeActivity.this,MostActiveUsersActivity.class));
+                        return  true;
                 }
                 return false;
             }
 
         });
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
         loadFragment(new FeedFragment());
+
+        new UpdateLocationTask().execute(this);
+
     }
 
     @Override
@@ -200,6 +214,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     private void getFriendsPosts() {
 
+        friendPosts.clear();
+
         for(int i = 0; i < friendNicks.size(); i++)
         {
             mDatabase.child("users").child(friendNicks.get(i)).child("posts").addValueEventListener(new ValueEventListener() {
@@ -258,24 +274,36 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             for (Map.Entry<String, Object> entry : users.entrySet()){
                 Map singleUser = (Map) entry.getValue();
                 friendNicks.add((String) singleUser.get("username"));
+                currentUser.friends.add(new Friend((String) singleUser.get("username")));
             }
+
+            for(int i = 0; i < friendNicks.size(); i++)
+            {
+                mDatabase.child("users").child(friendNicks.get(i)).child("lat").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                mDatabase.child("users").child(friendNicks.get(i)).child("lng").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
         }
-    }
-
-    private ArrayList<Post> SearchByAtribute(String attribute, String param, ArrayList<Post> posts){
-
-        ArrayList<Post> wantedPosts = new ArrayList<>();
-
-        for(int i = 0; i < posts.size(); i++){
-            if (attribute.equals("nickname") && posts.get(i).getCreator().equals(param)){
-                wantedPosts.add(posts.get(i));
-            }
-            if (attribute.equals("typeOfPost") && posts.get(i).getTypeOfPost().equals(param)){
-                wantedPosts.add(posts.get(i));
-            }
-        }
-
-        return wantedPosts;
     }
 
 }

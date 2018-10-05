@@ -16,7 +16,7 @@ public class User {
     public String profileImageUrl;
     public Pet pet;
     public ArrayList<Friend> friends;
-    public int activityPoints;
+    public long activityPoints;
     private String lat;
     private String lng;
 
@@ -58,7 +58,7 @@ public class User {
          * lng = lg;
          */
     }
-    public User(String email, String firstName, String lastName ,String username,String aboutMe,String joined, String activityLevel,int activityPoints){
+    public User(String email, String firstName, String lastName ,String username,String aboutMe,String joined, String activityLevel,long activityPoints){
         this.email = email;
         this.firstname = firstName;
         this.lastname = lastName;
